@@ -1,14 +1,17 @@
 package io.izzel.mods.decal;
 
+import io.izzel.mods.decal.packet.DecalChannel;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.NetworkConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Objects;
 
 @Mod(DecalMod.MODID)
 public class DecalMod {
@@ -24,9 +27,7 @@ public class DecalMod {
                 () -> NetworkConstants.IGNORESERVERONLY,
                 (a, b) -> true
             ));
-    }
-
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
+        Objects.requireNonNull(DecalChannel.channel(), "channel");
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> DecalConfig::register);
     }
 }

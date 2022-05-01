@@ -1,6 +1,6 @@
-package io.izzel.mods.decal.packet;
+package io.izzel.mods.decal.packet.login;
 
-import io.izzel.mods.decal.client.ClientHandler;
+import io.izzel.mods.decal.packet.ClientHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 

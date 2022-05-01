@@ -1,5 +1,6 @@
-package io.izzel.mods.decal.packet;
+package io.izzel.mods.decal.packet.login;
 
+import io.izzel.mods.decal.packet.ClientHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -19,15 +20,17 @@ public class S2CDecalLoginWrapper extends DecalLoginPacket {
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeResourceLocation(channel);
+        buf.writeVarInt(data.readableBytes());
         buf.writeBytes(data);
     }
 
     public static S2CDecalLoginWrapper decode(FriendlyByteBuf buf) {
-        return new S2CDecalLoginWrapper(buf.readResourceLocation(), buf);
+        var channel = buf.readResourceLocation();
+        var len = buf.readVarInt();
+        return new S2CDecalLoginWrapper(channel, buf.readSlice(len));
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {
-
-        return false;
+        return ClientHandler.handleLoginPacket(ctx.get(), channel, data, getLoginIndex());
     }
 }

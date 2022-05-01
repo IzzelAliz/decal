@@ -2,9 +2,11 @@
   "required": true,
   "minVersion": "0.8",
   "package": "io.izzel.mods.decal.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "decal.refmap.json",
   "mixins": [
+    "HandshakeHandlerMixin",
+    "ServerboundCustomQueryPacketMixin"
   ],
   "client": [
   ],

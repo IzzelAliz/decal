@@ -1,4 +1,4 @@
-package io.izzel.mods.decal.packet;
+package io.izzel.mods.decal.packet.login;
 
 import java.util.function.IntSupplier;
 
