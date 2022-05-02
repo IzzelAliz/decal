@@ -193,6 +193,7 @@ public class FileBasedRepo implements LocalRepository {
                 for (Entry entry : sortedEntry) {
                     totalSize -= entry.size;
                     toRemove.add(entry);
+                    map.remove(entry.tag);
                     if (totalSize <= this.maxSize) {
                         break;
                     }
