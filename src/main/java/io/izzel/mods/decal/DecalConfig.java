@@ -11,13 +11,14 @@ import java.util.function.Predicate;
 
 public class DecalConfig {
 
-    private static ForgeConfigSpec.ConfigValue<Long> maxSize;
+    private static ForgeConfigSpec.ConfigValue<Number> maxSize;
     private static ForgeConfigSpec.ConfigValue<String> expireDuration;
     private static ForgeConfigSpec.ConfigValue<String> manageDuration;
 
     static void register() {
         var builder = new ForgeConfigSpec.Builder();
-        maxSize = builder.comment("Max size of client cache in bytes").define("max-size", 64 * 1024 * 1024L);
+        maxSize = builder.comment("Max size of client cache in bytes").define("max-size", 64 * 1024 * 1024L,
+            o -> o instanceof Number);
         Predicate<Object> durationValidate = s -> {
             try {
                 Duration.parse(Objects.toString(s));
@@ -34,7 +35,7 @@ public class DecalConfig {
     }
 
     public static long getMaxSize() {
-        return maxSize.get();
+        return maxSize.get().longValue();
     }
 
     public static long getExpireMillis() {
