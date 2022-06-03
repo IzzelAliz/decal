@@ -57,8 +57,10 @@ public class ClientHandler {
             DecalMod.LOGGER.debug("Caching packet from channel {} index {}: {}", channel, loginIndex, tag);
             getRepo().put(tag, dataWithChannel);
         }
-        return ctx.getPacketHandled();
+        return ctx.getPacketHandled() && advanceFrom(loginIndex + 1, ctx);
     }
+
+    private static volatile Int2ObjectArrayMap<Callable<ByteBuf>> pendingPackets;
 
     public static boolean handleLoginManifest(NetworkEvent.Context ctx, String[] tags) {
         var present = new Int2ObjectArrayMap<Callable<ByteBuf>>(tags.length);
@@ -71,8 +73,15 @@ public class ClientHandler {
         }
         DecalMod.LOGGER.debug("Received {} packets from manifest, {} cache hits", tags.length, present.size());
         DecalChannel.channel().reply(new C2SDecalLoginManifestAck(present.keySet().toIntArray()), ctx);
-        for (var entry : present.int2ObjectEntrySet()) {
-            if (!cacheHitDispatchLogin(entry.getIntKey(), entry.getValue(), ctx)) {
+        pendingPackets = present;
+        return advanceFrom(0, ctx);
+    }
+
+    private static boolean advanceFrom(int index, NetworkEvent.Context ctx) {
+        var packets = pendingPackets;
+        if (packets == null) return false;
+        for (Callable<ByteBuf> payload; (payload = packets.get(index)) != null; index++) {
+            if (!cacheHitDispatchLogin(index, payload, ctx)) {
                 return false;
             }
         }
