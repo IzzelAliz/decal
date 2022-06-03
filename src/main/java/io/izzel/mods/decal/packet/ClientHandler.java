@@ -81,6 +81,7 @@ public class ClientHandler {
         var packets = pendingPackets;
         if (packets == null) return false;
         for (Callable<ByteBuf> payload; (payload = packets.get(index)) != null; index++) {
+            if (!ctx.getNetworkManager().isConnected()) return true;
             if (!cacheHitDispatchLogin(index, payload, ctx)) {
                 return false;
             }
