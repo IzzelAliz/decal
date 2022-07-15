@@ -76,8 +76,9 @@ public class HandshakeHandlerMixin implements HandshakeHandlerBridge {
     @Override
     public void decalClientHit(int[] packets) {
         for (int packet : packets) {
-            this.pendingList.set(packet, null);
-            this.sentMessages.add(packet);
+            if (this.pendingList.set(packet, null).needsResponse()) {
+                this.sentMessages.add(packet);
+            }
         }
         for (var payload : this.pendingList) {
             if (payload != null) {
@@ -87,7 +88,8 @@ public class HandshakeHandlerMixin implements HandshakeHandlerBridge {
                 this.messageList.add(new NetworkRegistry.LoginPayload(
                     buffer,
                     DecalChannel.getChannelName(),
-                    payload.getMessageContext()
+                    payload.getMessageContext(),
+                    payload.needsResponse()
                 ));
             } else {
                 this.messageList.add(null);
